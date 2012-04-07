@@ -1,0 +1,11 @@
+var jq = JQ(object);
+object = {a:1, b:2, c:3}
+object = [1,2,3]
+object = {a:1, b: [1,2,3], c:4}
+jq("a") -> jq({a:1, b:2, c:3}
+jq("b") -> jq({a:1, b:2, c:3}
+jq(":1") -> jq({a:1, b:2, c:3})
+jq(":1").prop("a") -> 1
+jq(":1").propDelete("a") -> jq{b:2, c:3}
+jq("prop:condition")
+

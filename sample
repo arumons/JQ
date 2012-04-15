@@ -9,3 +9,29 @@ jq(":1").prop("a") -> 1
 jq(":1").propDelete("a") -> jq{b:2, c:3}
 jq("prop:condition")
 
+
+jq("a")
+jq("a", 1)
+jq("a", "<", 1)
+jq("a", "=", 2)
+jq("a", ">", 3)
+jq("a", "<=", 4)
+jq("a", "=>", 5)
+jq("a", "in", [])
+jq("a").and("b").and("c").prop("a")
+jq("a").and("b").and("c").prop("a", 10)
+jq("a").and("b").and("c").delete();
+
+jq("a").("b").or("c")
+
+jq(["a"], "and", ["b"], "or", ["c"]) -> a and (b or c)
+jq([["a"], "and", ["b"]], "or", ["c"]) -> (a and b) or c
+
+ver. jquery
+jq([["a"], ["b"]], ["c"])
+
+var. mongo
+jq(
+  jq("a").and("b"))
+.or("c")
+

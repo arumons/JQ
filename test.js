@@ -17,21 +17,21 @@ describe('JQ', function(){
     it('should return JQ object when a valid json string passed', function() {
       var jq = JQ(json_string);
       jq.should.be.a('function');
-      jq.isJQ.should.be.true;
+      jq.isJQ().should.be.true;
     });
     
     it('should return JQ object when a javascript object passed', function() {
       var jq = JQ(js_object);
       jq.should.be.a('function');
-      jq.isJQ.should.be.true;
+      jq.isJQ().should.be.true;
     });
   });
 
   describe('baseObject', function() {
     it('should return a base object', function() {
       var jq = JQ(js_object);
-      jq.baseObject.should.be.a('object');
-      jq.baseObject.should.eql(js_object);
+      jq.baseObject().should.be.a('object');
+      jq.baseObject().should.eql(js_object);
     });
   });
 
@@ -53,12 +53,22 @@ describe('JQ', function(){
     it('return the nth element in the matched object set', function() {
       var jq = JQ(js_object);
       jq('a').get(0).should.eql(js_object);
-      jq('a').get(1).should.eql({a: 1, d: 4});
+      jq('a').get(1).should.eql(js_object.c);
     });
 
     it('return the whole matched object set', function() {
       var jq = JQ(js_object);
-      jq('a').get().should.eql([js_object, {a: 1, d:4}]);
+      jq('a').get().should.eql([js_object, js_object.c]);
+    });
+  });
+
+  describe('eq', function() {
+    it('return the new JQ object that only have the nth element in the matched object set', function() {
+      var jq = JQ(js_object);
+      jq('a').size().should.eql(2);
+      jq('a').eq(0).size().should.eql(1);
+      jq('a').eq(1).size().should.eql(1);
+      jq('a').eq(2).empty().should.be.true;
     });
   });
 
@@ -68,6 +78,7 @@ describe('JQ', function(){
       jq('a').size().should.eql(2);
       jq('a').get(0).should.eql(js_object);
       jq('a').get(1).should.eql({a:1, d:4});
+      jq('a').eq(2).empty().should.be.true;
       should.not.exist(jq('a').get(2));
 
       jq('b').size().should.eql(1);
@@ -75,9 +86,6 @@ describe('JQ', function(){
       should.not.exist(jq('b').get(1));
     })
   });
-
-
-
 });
 
 //  it('can get original json from jq object', function() {

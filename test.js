@@ -65,6 +65,8 @@ describe('JQ', function(){
   describe('eq', function() {
     it('return the new JQ object that only have the nth element in the matched object set', function() {
       var jq = JQ(js_object);
+      jq.size().should(eql(1));
+
       jq('a').size().should.eql(2);
       jq('a').eq(0).size().should.eql(1);
       jq('a').eq(1).size().should.eql(1);
@@ -86,17 +88,15 @@ describe('JQ', function(){
       should.not.exist(jq('b').get(1));
     })
   });
+
+  describe('props', function() {
+    describe('(key)', function() {
+      it('should return a array of value binded passed to passed key', function() {
+        var jq = JQ(js_object);
+      });
+  });
 });
 
-//  it('can get original json from jq object', function() {
-//    JSON.parse(json_test).should.eql(jq.json);
-//  });
-//
-//  it('should return object when selector passed', function() {
-//    var filtered = jq('a');
-//    filtered.should.be.a('object');
-//  });
-//
 //  it('should return values when value equal arg passed', function() {
 //    var props = jq('a', 1).props('a');
 //    props.should.eql([1]);

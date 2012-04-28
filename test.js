@@ -3,7 +3,6 @@ var JQ = require('./jq.js').JQ;
 
 describe('JQ', function(){
 
-  var json_string = '{"a": 1, "b": 2, "c": {"d": 4}}';
   var js_object = {
     a: 1,
     b: 2,
@@ -12,6 +11,7 @@ describe('JQ', function(){
        d: 4
     }
   };
+  var json_string = JSON.stringify(js_object);
 
   describe('init', function() {
     it('should return JQ object when a valid json string passed', function() {
@@ -32,6 +32,8 @@ describe('JQ', function(){
       var jq = JQ(js_object);
       jq.baseObject().should.be.a('object');
       jq.baseObject().should.eql(js_object);
+
+      jq('a').baseObject().should.eql(js_object);
     });
   });
 
@@ -52,12 +54,16 @@ describe('JQ', function(){
   describe('get', function() {
     it('return the nth element in the matched object set', function() {
       var jq = JQ(js_object);
+      jq.get(0).should.eql(js_object);
+
       jq('a').get(0).should.eql(js_object);
       jq('a').get(1).should.eql(js_object.c);
     });
 
     it('return the whole matched object set', function() {
       var jq = JQ(js_object);
+      jq.get().should.eql([js_object]);
+
       jq('a').get().should.eql([js_object, js_object.c]);
     });
   });
@@ -65,7 +71,7 @@ describe('JQ', function(){
   describe('eq', function() {
     it('return the new JQ object that only have the nth element in the matched object set', function() {
       var jq = JQ(js_object);
-      jq.size().should(eql(1));
+      jq.size().should.eql(1);
 
       jq('a').size().should.eql(2);
       jq('a').eq(0).size().should.eql(1);
@@ -91,9 +97,18 @@ describe('JQ', function(){
 
   describe('props', function() {
     describe('(key)', function() {
-      it('should return a array of value binded passed to passed key', function() {
+      it('should return a array of value binded to passed key', function() {
         var jq = JQ(js_object);
+        jq.props('a').should.eql([js_object.a]);
+        jq.props('b').should.eql([js_object.b]);
+        jq.props('c').should.eql([js_object.c]);
+
+        jq.props('e').should.be.empty;
+
+        jq('a').props('a').should.eql([js_object.a, js_object.c.a]);
+        jq('a').props('b').should.eql([js_object.b]);
       });
+    })
   });
 });
 

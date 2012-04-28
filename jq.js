@@ -98,6 +98,4 @@ JQ.prototype.props = function(prop, val) {
 };
 
 JQ.prototype.delete = function() {
-  
-
 };

@@ -61,7 +61,7 @@ JQ.prototype.size = function() {
 };
 
 JQ.prototype.get = function(index) {
-  if(index === null || index === undefined) {
+  if (index === null || index === undefined) {
     return this._jsons;
   }
   return this._jsons[index];
@@ -71,7 +71,7 @@ JQ.prototype.eq = function(index) {
   var baseObject = this.baseObject();
   var jsons = [];
   if (this.get(index)) {
-    jsons.push([this.get(index)]);
+    jsons.push(this.get(index));
   }
 
   return new JQ(baseObject, jsons);

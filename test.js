@@ -11,6 +11,7 @@ describe('JQ', function(){
        d: 4
     }
   };
+  
   var json_string = JSON.stringify(js_object);
 
   describe('init', function() {
@@ -74,8 +75,8 @@ describe('JQ', function(){
       jq.size().should.eql(1);
 
       jq('a').size().should.eql(2);
-      jq('a').eq(0).size().should.eql(1);
-      jq('a').eq(1).size().should.eql(1);
+      jq('a').eq(0).get(0).should.eql(js_object);
+      jq('a').eq(1).get(0).should.eql(js_object.c);
       jq('a').eq(2).empty().should.be.true;
     });
   });

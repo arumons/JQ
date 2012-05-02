@@ -77,7 +77,19 @@ describe('JQ', function(){
       jq('a').size().should.eql(2);
       jq('a').eq(0).get(0).should.eql(js_object);
       jq('a').eq(1).get(0).should.eql(js_object.c);
-      jq('a').eq(2).empty().should.be.true;
+    });
+  });
+
+  describe('empty', function() {
+    it('remove all properties from the matched object set', function() {
+      var jq = JQ(json_string);
+      jq.empty();
+      jq.baseObject().should.eql({});
+
+      jq = JQ(json_string);
+      jq("d").empty();
+      jq.baseObject().a.should.eql(1);
+      jq.baseObject().c.should.eql({});
     });
   });
 
@@ -87,7 +99,6 @@ describe('JQ', function(){
       jq('a').size().should.eql(2);
       jq('a').get(0).should.eql(js_object);
       jq('a').get(1).should.eql({a:1, d:4});
-      jq('a').eq(2).empty().should.be.true;
       should.not.exist(jq('a').get(2));
 
       jq('b').size().should.eql(1);
@@ -96,18 +107,18 @@ describe('JQ', function(){
     })
   });
 
-  describe('props', function() {
+  describe('prop', function() {
     describe('(key)', function() {
       it('should return a array of value binded to passed key', function() {
         var jq = JQ(js_object);
-        jq.props('a').should.eql([js_object.a]);
-        jq.props('b').should.eql([js_object.b]);
-        jq.props('c').should.eql([js_object.c]);
+        jq.prop('a').should.eql(js_object.a);
+        jq.prop('b').should.eql(js_object.b);
+        jq.prop('c').should.eql(js_object.c);
 
-        jq.props('e').should.be.empty;
+        should.not.exist(jq.prop('e'));
 
-        jq('a').props('a').should.eql([js_object.a, js_object.c.a]);
-        jq('a').props('b').should.eql([js_object.b]);
+        jq('a').prop('a').should.eql(js_object.a, js_object.c.a);
+        jq('a').prop('b').should.eql(js_object.b);
       });
     })
   });

@@ -90,23 +90,30 @@ JQ.prototype.eq = function(index) {
 };
 
 JQ.prototype.empty = function() {
-  if (this._jsons.length === 0) {
-    return true;
+  for (var i in this._jsons) {
+    for (var p in this._jsons[i]) {
+      if (this._jsons[i].hasOwnProperty(p)) {
+        delete this._jsons[i][p];
+      }
+    }
   }
-  return false;
+  return this;
 };
 
-JQ.prototype.props = function(prop, val) {
-  var result = [];
-  for (var i = 0, l = this._jsons.length; i < l; i++) {
-    if (val !== undefined) {
-      this._jsons[i][prop] = val;
+JQ.prototype.prop = function(prop, val) {
+  // get
+  if (arguments.length === 1) {
+    if (this._jsons.length === 0) {
+      return undefined;
     }
-    if (prop in this._jsons[i]) {
-      result.push(this._jsons[i][prop]);
-    }
+    return this._jsons[0][prop];
   }
-  return result;
+
+  // set
+  for (var i = 0, l = this._jsons.length; i < l; i++) {
+    this._jsons[i][prop] = val;
+  }
+  return this;
 };
 
 JQ.prototype.remove = function() {

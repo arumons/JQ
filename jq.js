@@ -11,41 +11,53 @@ exports.JQ = function(json) {
 
   var jq = function(prop, value) {
     var jsons = [];
-    filter(json, jsons, prop, value);
-    return new JQ(json, jsons);
+    var paths = [];
+    filter(json, jsons, [], paths, prop, value);
+    return new JQ(json, jsons, paths);
   };
 
   jq._baseObject = json;
   jq._jsons = [json];
+  jq._paths = [];
 
   extend(JQ.prototype, jq);
   return jq;
 };
 
-var filter = function(json, result, prop, value) {
+var filter = function(json, result, path, paths, prop, value) {
   if (typeof json === 'number') return;
   if (typeof json === 'string') return;
   if (typeof json === 'boolean') return;
   if (json === null) return;
+
   if (Array.isArray(json)) {
     for (var i = 0, l = json.length; i < l; i++) {
-      filter(json[i], prop, result);
+      path.push(i);
+      filter(json[i], result, path, paths, prop, value);
+      path.pop();
     }
     return;
   }
+
   if (typeof json === 'object') {
     for (var p in json) {
       if (p === prop && (value === undefined || json[p] === value)) {
+        var _path = path.slice();
+        _path.push(p);
+        paths.push(_path);
         result.push(json);
       }
-      filter(json[p], result, prop, value);
+      path.push(p);
+      filter(json[p], result, path, paths, prop, value);
+      path.pop();
     }
   }
 };
 
-var JQ = function(json, jsons) {
+var JQ = function(json, jsons, paths) {
   this._baseObject = json;
   this._jsons = jsons;
+  this._paths = paths;
 };
 
 JQ.prototype.isJQ = function() {
@@ -97,5 +109,25 @@ JQ.prototype.props = function(prop, val) {
   return result;
 };
 
-JQ.prototype.delete = function() {
+JQ.prototype.remove = function() {
+  // delte all from root
+  if (this._paths.length === 0) {
+    for (var p in this._baseObject) {
+      delete this.baseObject()[p];
+    }
+    return;
+  }
+
+  for (var i = 0, len = this._paths.length; i < len; i++) {
+    _remove(this.baseObject(), this._paths[i]);
+  }
+};
+
+var _remove = function (object, path) {
+  var obj = object;
+  var len = path.length;
+  for (var i = 0, l = len; i < len -1; i++) {
+    obj = obj[path[i]];
+  }
+  delete obj[path[path.length -1]]
 };

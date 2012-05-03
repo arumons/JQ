@@ -26,6 +26,13 @@ describe('JQ', function(){
       jq.should.be.a('function');
       jq.isJQ().should.be.true;
     });
+
+    it('should return JQ object when a array passed', function() {
+      var jq = JQ([1,2,3]);
+      jq.should.be.a('function');
+      jq.isJQ().should.be.true;
+      jq.baseObject().should.eql([1,2,3]);
+    });
   });
 
   describe('baseObject', function() {
@@ -144,51 +151,43 @@ describe('JQ', function(){
       should.not.exist(jq.baseObject().d);
     })
   });
+
+  describe('each', function() {
+    it('iterate over a JQ object, executing a function for each matched element', function() {
+      var jq = JQ(json_string);
+      jq.each(function() {
+        this.should.eql(js_object);
+      });
+      
+      jq('a').each(function(i) {
+        if (i === 0) {
+          this.should.eql(js_object);
+        } else if (i === 1) {
+          this.should.eql(js_object.c);
+        }
+      });
+
+      var count = 0;
+      jq('a').each(function() {
+        count++;
+        return false;
+      });
+      count.should.be.eql(1);
+    });
+  });
+
+  describe('map', function() {
+    it('pass each element in the current matched set throuth a function, producing a new JQ object containing the return values', function() {
+      var jq = JQ(json_string);
+      var result = jq.map(function() {
+        return this.a;
+      });
+      result.baseObject().should.eql([1]);
+
+      result = jq('a').map(function(i) {
+        return this.a * 10;
+      });
+      result.baseObject().should.eql([10, 10]);
+    })
+  })
 });
-
-
-//  it('should return values when value equal arg passed', function() {
-//    var props = jq('a', 1).props('a');
-//    props.should.eql([1]);
-//
-//    var props = jq('a', 2).props('a');
-//    props.should.eql([]);
-//
-//    var props = jq('b', 3).props('a');
-//    props.should.eql([]);
-//
-//    var props = jq('d', 4).props('d');
-//    props.should.eql([4]);
-//
-//  });
-//
-//  it('shoud return values binded prop passed', function() {
-//    var props = jq('a').props('a');
-//    props.should.eql([1]);
-//    
-//    var props = jq('a').props('b');
-//    props.should.eql([2]);
-//
-//    var props = jq('a').props('c');
-//    props.should.eql([{"d": 4}]);
-//
-//    var props = jq('d').props("a");
-//    props.should.eql([]);
-//
-//    var props = jq('d').props('d');
-//    props.should.eql([4]);
-//  });
-//
-//  it('shoud update values by argument passed', function() {
-//    var props = jq('a').props('a', 10);
-//    props.should.eql([10]);
-//
-//    var props = jq('b').props('b', 20);
-//    props.should.eql([20]);
-//
-//    var props = jq('d').props('e', 30);
-//    props.should.eql([30]);
-//  });
-
-//});
-  

@@ -24,6 +24,18 @@ exports.JQ = function(json) {
   return jq;
 };
 
+exports.JQ.hello = function() {
+  if (console) {
+    if (console.log) {
+      console.log("hello! I'm JQ library!");
+      return;
+    }
+  }
+  if (alert) {
+    alert("hello! I'm JQ library!");
+  }
+};
+  
 var filter = function(json, result, path, paths, prop, value) {
   if (typeof json === 'number') return;
   if (typeof json === 'string') return;
@@ -60,18 +72,6 @@ var JQ = function(json, jsons, paths) {
   this._paths = paths;
 };
 
-JQ.prototype.hello = function() {
-  if (console) {
-    if (console.log) {
-      console.log("hello! I'm a JQ library!");
-      return;
-    }
-  }
-  if (alert) {
-    alert("hello! I'm a JQ library!");
-  }
-};
-  
 JQ.prototype.isJQ = function() {
   return true;
 };
@@ -150,4 +150,22 @@ var _remove = function (object, path) {
     obj = obj[path[i]];
   }
   delete obj[path[path.length -1]]
+};
+
+JQ.prototype.each = function(fn) {
+  var isContinue;
+  for (var i = 0, l = this._jsons.length; i < l; i++) {
+    isContinue = fn.call(this._jsons[i], i, this._jsons[i]);
+    if (isContinue === false) {
+      return;
+    }
+  }
+};
+
+JQ.prototype.map = function(fn) {
+  var results = [];
+  for (var i = 0, l = this._jsons.length; i < l; i++) {
+    results.push(fn.call(this._jsons[i], i, this._jsons[i]));
+  }
+  return new JQ(results);
 };

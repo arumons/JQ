@@ -122,12 +122,13 @@ JQ.prototype.remove = function() {
     for (var p in this._baseObject) {
       delete this.baseObject()[p];
     }
-    return;
+    return this;
   }
 
   for (var i = 0, len = this._paths.length; i < len; i++) {
     _remove(this.baseObject(), this._paths[i]);
   }
+  return this;
 };
 
 var _remove = function (object, path) {

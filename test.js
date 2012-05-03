@@ -109,20 +109,43 @@ describe('JQ', function(){
 
   describe('prop', function() {
     describe('(key)', function() {
-      it('should return a array of value binded to passed key', function() {
+      it('should return value of a property for the first element in the set of matched elements', function() {
         var jq = JQ(js_object);
         jq.prop('a').should.eql(js_object.a);
         jq.prop('b').should.eql(js_object.b);
         jq.prop('c').should.eql(js_object.c);
-
         should.not.exist(jq.prop('e'));
 
         jq('a').prop('a').should.eql(js_object.a, js_object.c.a);
         jq('a').prop('b').should.eql(js_object.b);
       });
     })
+
+    describe('(key, value)', function() {
+      it('should set property for the set of matched elements', function() {
+        var jq = JQ(json_string);
+        jq('a').prop('a', 10);
+        var o = JSON.parse(json_string);
+        o.a = 10;
+        o.c.a = 10;
+        jq.baseObject().should.eql(o);
+      });
+    });
+  });
+
+  describe('remove', function() {
+    it('remove all properties from the matched object set', function() {
+      var jq = JQ(json_string);
+      jq.remove();
+      jq.baseObject().should.eql({});
+
+      jq = JQ(json_string);
+      jq('d').remove();
+      should.not.exist(jq.baseObject().d);
+    })
   });
 });
+
 
 //  it('should return values when value equal arg passed', function() {
 //    var props = jq('a', 1).props('a');

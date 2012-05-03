@@ -60,6 +60,18 @@ var JQ = function(json, jsons, paths) {
   this._paths = paths;
 };
 
+JQ.prototype.hello = function() {
+  if (console) {
+    if (console.log) {
+      console.log("hello! I'm a JQ library!");
+      return;
+    }
+  }
+  if (alert) {
+    alert("hello! I'm a JQ library!");
+  }
+};
+  
 JQ.prototype.isJQ = function() {
   return true;
 };

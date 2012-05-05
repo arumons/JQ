@@ -2,7 +2,7 @@ var jsp = require('uglify-js').parser;
 
 var opStack = [];
 
-exports.check = check = function(obj, code) {
+exports.evalCondition = evalCondition = function(obj, code) {
   opStack = [];
   var ast = jsp.parse(orig_code);
   makeOpStack(ast[1][0][1]);

@@ -1,51 +1,164 @@
 var jsp = require('uglify-js').parser;
 
-var walk = function(obj, ast) {
-  var op = getOp(ast);
-  return op(obj);
-};
-
-var getOp = function(ast) {
-   if (ast[0] === 'name') {
-     return getValue;
-   } else if (ast[0] === 'binary') {
-     if (ast[1] === '===') {
-       return strinctEqual;
-     }
-   }
-};
-
-var getValue = function(obj) {
-  return obj[1];
-};
-
-var strictEqual = function(obj, left, right) {
-  var lValue = walk(left);
-  var rValue = walk(right);
-  return lValue === rValue;
-};
-
 var opStack = [];
 
 var makeOpStack = function(ast) {
-  if (ast[0] === 'binary') {
-    opStack.push([ast[0], ast[1]]);
+  var type = ast[0];
+  if (type === 'conditional') {
+   opStack.push(ast);
+   makeOpStack(ast[1]);
+   makeOpStack(ast[2]);
+   makeOpStack(ast[3]);
+  } else if (type === 'binary') {
+    opStack.push(ast);
     makeOpStack(ast[2]);
     makeOpStack(ast[3]);
+  } else if (type === 'unary-prefix') {
+    opStack.push(ast);
+    makeOpStack(ast[2]);
+  } else if (type === 'dot') {
+    opStack.push(ast);
+    makeOpStack(ast[1]);
+  } else if (type === 'sub') {
+    opStack.push(ast);
+    makeOpStack(ast[1]);
+    makeOpStack(ast[2]);
   } else {
     opStack.push(ast);
   }
-}
+};
 
-
+var expr_eval = function(obj) {
+  var op = opStack.shift();
+  var type = op[0];
+  if (type === 'conditional') {
+    var condition = expr_eval(obj);
+    if (condition) {
+      var result = expr_eval(obj);
+      opStack.shift();
+      return result;
+    } else {
+      opStack.shift();
+      var result = expr_eval(obj);
+      return result;
+    }
+  } else if (type === 'binary' && (op[1] == '&&' || op[1] === '||')) {
+    var bOp = op[1];
+    var lValue = expr_eval(obj);
+    if  (bOp === '&&') {
+      if (lValue) {
+        var rValue = expr_eval(obj);
+        return lValue && rValue;
+      } else {
+        opStack.shift();
+        return lValue;
+      }
+    } else if (bOp === '||') {
+      if (lValue) {
+        opStack.shift();
+        return lValue;
+      } else {
+        var rValue = expr_eval(obj);
+        return lValue || rValue;
+      }
+    }
+  } else if (type === 'binary') {
+    var bOp = op[1];
+    var lValue = expr_eval(obj);
+    var rValue = expr_eval(obj);
+    if (bOp === '===') {
+      return lValue === rValue;
+    } else if (bOp === '!==') {
+      return lValue !== rValue;
+    } else if (bOp === '==') {
+      return lValue == rValue;
+    } else if (bOp === '!=') {
+      return lValue != rValue;
+    } else if (bOp === '*') {
+      return lValue * rValue;
+    } else if (bOp === '/') {
+      return lValue / rValue;
+    } else if (bOp === '%') {
+      return lValue % rValue;
+    } else if (bOp === '+') {
+      return lValue + rValue;
+    } else if (bOp === '-') {
+      return lValue - rValue;
+    } else if (bOp === '<<') {
+      return lValue << rValue;
+    } else if (bOp === '>>') {
+      return lValue >> rValue;
+    } else if (bOp === '>>>') {
+      return lValue >>> rValue;
+    } else if (bOp === '<') {
+      return lValue < rValue;
+    } else if (bOp === '<=') {
+      return lValue <= rValue;
+    } else if (bOp === '>') {
+      return lValue > rValue;
+    } else if (bOp === '>=') {
+      return lValue >= rValue;
+    } else if (bOp === 'in') {
+      return lValue in rValue;
+    } else if (bOp === 'instanceof') {
+      return lValue instanceof rValue;
+    } else if (bOp === '&') {
+      return lValue & rValue;
+    } else if (bOp === '^') {
+      return lValue ^ rValue;
+    } else if (bOp === '|') {
+      return lValue | rValue;
+    }
+  } else if (type === 'unary-prefix') {
+    var uOp = op[1];
+    var uValue = expr_eval(obj);
+    if (uOp === '+') {
+      return uValue;
+    } else if (uOp === '-') {
+      return -uValue;
+    } else if (uOp === '!') {
+      return !uValue;
+    } else if (uOp === '~') {
+      return ~uValue;
+    } else if (uOp === 'typeof') {
+      return typeof uValue;
+    }
+  } else {
+    if (type === 'name') {
+      if (op[1] === 'this') {
+        return obj;
+      } else {
+        var prop = op[1];
+        return obj[prop];
+      }
+    } else if (type === 'num' || type ===  'string' || type === 'array') {
+      var value = op[1];
+      return value;
+    } else if (type === 'dot') {
+      var object = expr_eval(obj);
+      var prop = op[2];
+      return object[prop];
+    } else if (type === 'sub') {
+      var object = expr_eval(obj);
+      var prop = expr_eval(obj);
+      return object[prop];
+    } else {
+     throw "no support operation";
+    } 
+  }
+};
 
 //var orig_code = "a && b || ['  a  '] && 'hoge'";
-var orig_code = "(a + 3) === 4";
+var obj = {a: {b: {c: 3}}};
+var orig_code = "a['b']['c']";
 var ast = jsp.parse(orig_code);
+console.log(ast);
 makeOpStack(ast[1][0][1]);
+console.log(ast[1][0][1]);
+console.log();
 console.log(opStack);
-
-
+var result = expr_eval(obj);
+console.log(result);
 
 
 

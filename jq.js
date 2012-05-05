@@ -9,10 +9,18 @@ exports.JQ = function(json) {
     json = JSON.parse(json);
   }
 
-  var jq = function(prop, value) {
+  var jq = function() {
+    var conditions = [];
+    if (!Array.isArray(arguments[0])) {
+      conditions.push([arguments[0], arguments[1], arguments[2]);
+    } else {
+      for (var i = 0, l = arguments.length; i < l; i++) {
+        conditions.push(arguments[i]);
+      }
+    }
     var jsons = [];
     var paths = [];
-    filter(json, jsons, [], paths, prop, value);
+    filter(json, jsons, [], paths, conditions);
     return new JQ(json, jsons, paths);
   };
 
@@ -22,6 +30,23 @@ exports.JQ = function(json) {
 
   extend(JQ.prototype, jq);
   return jq;
+};
+
+var makeCondition = function(prop, op, value) {
+  var condition = {};
+  if (op === undefined) {
+    condition.prop = prop;
+    condition.noOpAndValue = true;
+  } else (value === undefined) {
+    condition.prop = prop;
+    condition.value = value;
+    condition.noOp = true;
+  } else {
+    condition.prop = prop;
+    condition.op = op;
+    condition.value = value;
+  }
+  return condition;
 };
 
 exports.JQ.hello = function() {
@@ -36,7 +61,7 @@ exports.JQ.hello = function() {
   }
 };
   
-var filter = function(json, result, path, paths, prop, value) {
+var filter = function(json, result, path, paths, conditions) {
   if (typeof json === 'number') return;
   if (typeof json === 'string') return;
   if (typeof json === 'boolean') return;

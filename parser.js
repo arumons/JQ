@@ -148,7 +148,6 @@ var expr_eval = function(obj) {
   }
 };
 
-//var orig_code = "a && b || ['  a  '] && 'hoge'";
 var obj = {a: {b: {c: 3}}};
 var orig_code = "a['b']['c']";
 var ast = jsp.parse(orig_code);

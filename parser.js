@@ -2,9 +2,11 @@ var jsp = require('uglify-js').parser;
 
 var opStack = [];
 
+var global = (function() { return this;})();
+
 exports.evalCondition = evalCondition = function(obj, code) {
   opStack = [];
-  var ast = jsp.parse(orig_code);
+  var ast = jsp.parse(code);
   makeOpStack(ast[1][0][1]);
   return expr_eval(obj);
 };
@@ -136,6 +138,9 @@ var expr_eval = function(obj) {
         return obj;
       } else {
         var prop = op[1];
+        if (obj[prop] === undefined) {
+          return global[prop];
+        }
         return obj[prop];
       }
     } else if (type === 'num' || type ===  'string' || type === 'array') {

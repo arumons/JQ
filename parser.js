@@ -2,6 +2,13 @@ var jsp = require('uglify-js').parser;
 
 var opStack = [];
 
+exports.check = check = function(obj, code) {
+  opStack = [];
+  var ast = jsp.parse(orig_code);
+  makeOpStack(ast[1][0][1]);
+  return expr_eval(obj);
+};
+
 var makeOpStack = function(ast) {
   var type = ast[0];
   if (type === 'conditional') {
@@ -147,17 +154,3 @@ var expr_eval = function(obj) {
     } 
   }
 };
-
-var obj = {a: {b: {c: 3}}};
-var orig_code = "a['b']['c']";
-var ast = jsp.parse(orig_code);
-console.log(ast);
-makeOpStack(ast[1][0][1]);
-console.log(ast[1][0][1]);
-console.log();
-console.log(opStack);
-var result = expr_eval(obj);
-console.log(result);
-
-
-

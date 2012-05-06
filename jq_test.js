@@ -159,6 +159,19 @@ describe('JQ', function(){
     })
   });
 
+  describe('removeProp', function() {
+    it('remove property from the matched object set', function() {
+      var $jq = JQ(json_string);
+      $jq.removeProp('a');
+      console.log($jq.baseObject());
+      should.not.exist($jq.baseObject().a);
+
+      $jq = JQ(json_string);
+      $jq('d').removeProp('d');
+      should.not.exist($jq.baseObject().c.d);
+    })
+  });
+
   describe('each', function() {
     it('iterate over a JQ object, executing a function for each matched element', function() {
       var $jq = JQ(json_string);

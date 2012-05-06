@@ -102,13 +102,15 @@ JQ.prototype.eq = function(index) {
   return new JQ(baseObject, results);
 };
 
+var _clearProperty = function(obj) {
+  for (var p in obj) {
+    delete obj[p];
+  }
+};
+
 JQ.prototype.empty = function() {
   for (var i in this._results) {
-    for (var p in this._results[i]) {
-      if (this._results[i].hasOwnProperty(p)) {
-        delete this._results[i][p];
-      }
-    }
+    _clearProperty(this._results[i]);
   }
   return this;
 };
@@ -130,11 +132,9 @@ JQ.prototype.prop = function(prop, val) {
 };
 
 JQ.prototype.remove = function() {
-  // delte all from root
+  // delte all property from root
   if (this._paths.length === 0) {
-    for (var p in this.baseObject()) {
-      delete this.baseObject()[p];
-    }
+    _clearProperty(this.baseObject());
     return this;
   }
 
@@ -147,15 +147,25 @@ JQ.prototype.remove = function() {
 var _remove = function (obj, path) {
   var len = path.length;
   if (len === 0) {
-    for (var p in obj) {
-      delete obj[p];
-    }
+    _clearProperty(obj);
     return;
   }
   for (var i = 0, l = len; i < len -1; i++) {
     obj = obj[path[i]];
   }
   delete obj[path[path.length -1]]
+};
+
+JQ.prototype.removeProp = function(prop) {
+  if (this._paths.length === 0) {
+    delete this.baseObject()[prop];
+  }
+
+  for (var i = 0, len = this._paths.length; i < len; i++) {
+    var path = this._paths[i].slice();
+    path.push(prop);
+    _remove(this.baseObject(), path);
+  }
 };
 
 JQ.prototype.each = function(fn) {

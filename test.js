@@ -100,8 +100,8 @@ describe('JQ', function(){
     });
   });
 
-  describe('(propertyName)', function() {
-    it('should return a new JQ object that contain the object that have the provided property name', function() {
+  describe('(condition expr)', function() {
+    it('should return a new JQ object that contain the object that have the provided condition expr', function() {
       var $jq = JQ(js_object);
       $jq('a').size().should.eql(2);
       $jq('a').get(0).should.eql(js_object);
@@ -111,6 +111,9 @@ describe('JQ', function(){
       $jq('b').size().should.eql(1);
       $jq('b').get(0).should.eql(js_object);
       should.not.exist($jq('b').get(1));
+
+      $jq('a === 1 && d === 4').size().should.eql(1);
+      $jq('a === 1 && d === 4').get(0).should.eql(js_object.c);
     })
   });
 

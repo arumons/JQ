@@ -132,7 +132,7 @@ JQ.prototype.prop = function(prop, val) {
 JQ.prototype.remove = function() {
   // delte all from root
   if (this._paths.length === 0) {
-    for (var p in this._baseObject) {
+    for (var p in this.baseObject()) {
       delete this.baseObject()[p];
     }
     return this;
@@ -144,9 +144,14 @@ JQ.prototype.remove = function() {
   return this;
 };
 
-var _remove = function (object, path) {
-  var obj = object;
+var _remove = function (obj, path) {
   var len = path.length;
+  if (len === 0) {
+    for (var p in obj) {
+      delete obj[p];
+    }
+    return;
+  }
   for (var i = 0, l = len; i < len -1; i++) {
     obj = obj[path[i]];
   }

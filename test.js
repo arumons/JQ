@@ -142,13 +142,17 @@ describe('JQ', function(){
 
   describe('remove', function() {
     it('remove all properties from the matched object set', function() {
+       var $jq = JQ(json_string);
+       $jq.remove();
+       $jq.baseObject().should.eql({});
+ 
+       $jq = JQ(json_string);
+       $jq('d').remove();
+       should.not.exist($jq.baseObject().c);
+ 
       var $jq = JQ(json_string);
-      $jq.remove();
+      $jq('a === 1').remove();
       $jq.baseObject().should.eql({});
-
-      $jq = JQ(json_string);
-      $jq('d').remove();
-      should.not.exist($jq.baseObject().d);
     })
   });
 

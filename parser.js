@@ -136,11 +136,10 @@ var expr_eval = function(obj) {
     if (type === 'name') {
       if (op[1] === 'this') {
         return obj;
+      } else if(op[1] === 'global') {
+        return global;
       } else {
         var prop = op[1];
-        if (obj[prop] === undefined) {
-          return global[prop];
-        }
         return obj[prop];
       }
     } else if (type === 'num' || type ===  'string' || type === 'array') {

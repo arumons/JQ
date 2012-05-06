@@ -146,10 +146,10 @@ describe('evalCondition', function() {
 
   it('test instanceof operator', function() {
     var obj = {a: new String(), b: new Date()};
-    var code = "a instanceof String";
+    var code = "a instanceof global.String";
     parser.evalCondition(obj, code).should.be.true;
 
-    var code = "'b' instanceof String";
+    var code = "'b' instanceof global.String";
     parser.evalCondition(obj, code).should.be.false;
   });
 

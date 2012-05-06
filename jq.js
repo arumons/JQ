@@ -1,52 +1,30 @@
+var parser = require('./parser');
+
 var extend = function(from, to) {
   for (var p in from) {
     to[p] = from[p];
   }
 };
 
-exports.JQ = function(json) {
-  if (typeof json === 'string') {
-    json = JSON.parse(json);
+exports.JQ = function(obj) {
+  if (typeof obj === 'string') {
+    obj = JSON.parse(obj);
   }
 
-  var jq = function() {
-    var conditions = [];
-    if (!Array.isArray(arguments[0])) {
-      conditions.push([arguments[0], arguments[1], arguments[2]);
-    } else {
-      for (var i = 0, l = arguments.length; i < l; i++) {
-        conditions.push(arguments[i]);
-      }
-    }
-    var jsons = [];
+  var jq = function(condition) {
+    var results = [];
     var paths = [];
-    filter(json, jsons, [], paths, conditions);
-    return new JQ(json, jsons, paths);
+    condition = parser.compile(condition);
+    filter(obj, results, [], paths, condition);
+    return new JQ(obj, results, paths);
   };
 
-  jq._baseObject = json;
-  jq._jsons = [json];
+  jq._baseObject = obj;
+  jq._results = [obj];
   jq._paths = [];
 
   extend(JQ.prototype, jq);
   return jq;
-};
-
-var makeCondition = function(prop, op, value) {
-  var condition = {};
-  if (op === undefined) {
-    condition.prop = prop;
-    condition.noOpAndValue = true;
-  } else (value === undefined) {
-    condition.prop = prop;
-    condition.value = value;
-    condition.noOp = true;
-  } else {
-    condition.prop = prop;
-    condition.op = op;
-    condition.value = value;
-  }
-  return condition;
 };
 
 exports.JQ.hello = function() {
@@ -61,39 +39,38 @@ exports.JQ.hello = function() {
   }
 };
   
-var filter = function(json, result, path, paths, conditions) {
-  if (typeof json === 'number') return;
-  if (typeof json === 'string') return;
-  if (typeof json === 'boolean') return;
-  if (json === null) return;
+var filter = function(obj, results, path, paths, condition) {
+  if (typeof obj === 'number') return;
+  if (typeof obj === 'string') return;
+  if (typeof obj === 'boolean') return;
+  if (obj === null) return;
 
-  if (Array.isArray(json)) {
-    for (var i = 0, l = json.length; i < l; i++) {
+  if (Array.isArray(obj)) {
+    for (var i = 0, l = obj.length; i < l; i++) {
       path.push(i);
-      filter(json[i], result, path, paths, prop, value);
+      filter(obj[i], results, path, paths, condition);
       path.pop();
     }
     return;
   }
 
-  if (typeof json === 'object') {
-    for (var p in json) {
-      if (p === prop && (value === undefined || json[p] === value)) {
-        var _path = path.slice();
-        _path.push(p);
-        paths.push(_path);
-        result.push(json);
-      }
+  if (typeof obj === 'object') {
+    if (condition(obj)) {
+      var _path = path.slice();
+      paths.push(_path);
+      results.push(obj);
+    }
+    for (var p in obj) {
       path.push(p);
-      filter(json[p], result, path, paths, prop, value);
+      filter(obj[p], results, path, paths, condition);
       path.pop();
     }
   }
 };
 
-var JQ = function(json, jsons, paths) {
-  this._baseObject = json;
-  this._jsons = jsons;
+var JQ = function(obj, results, paths) {
+  this._baseObject = obj;
+  this._results = results;
   this._paths = paths;
 };
 
@@ -106,31 +83,30 @@ JQ.prototype.baseObject = function() {
 };
 
 JQ.prototype.size = function() {
-  return this._jsons.length;
+  return this._results.length;
 };
 
 JQ.prototype.get = function(index) {
   if (index === null || index === undefined) {
-    return this._jsons;
+    return this._results;
   }
-  return this._jsons[index];
+  return this._results[index];
 };
 
 JQ.prototype.eq = function(index) {
   var baseObject = this.baseObject();
-  var jsons = [];
+  var results = [];
   if (this.get(index)) {
-    jsons.push(this.get(index));
+    results.push(this.get(index));
   }
-
-  return new JQ(baseObject, jsons);
+  return new JQ(baseObject, results);
 };
 
 JQ.prototype.empty = function() {
-  for (var i in this._jsons) {
-    for (var p in this._jsons[i]) {
-      if (this._jsons[i].hasOwnProperty(p)) {
-        delete this._jsons[i][p];
+  for (var i in this._results) {
+    for (var p in this._results[i]) {
+      if (this._results[i].hasOwnProperty(p)) {
+        delete this._results[i][p];
       }
     }
   }
@@ -140,15 +116,15 @@ JQ.prototype.empty = function() {
 JQ.prototype.prop = function(prop, val) {
   // get
   if (arguments.length === 1) {
-    if (this._jsons.length === 0) {
+    if (this._results.length === 0) {
       return undefined;
     }
-    return this._jsons[0][prop];
+    return this._results[0][prop];
   }
 
   // set
-  for (var i = 0, l = this._jsons.length; i < l; i++) {
-    this._jsons[i][prop] = val;
+  for (var i = 0, l = this._results.length; i < l; i++) {
+    this._results[i][prop] = val;
   }
   return this;
 };
@@ -179,18 +155,18 @@ var _remove = function (object, path) {
 
 JQ.prototype.each = function(fn) {
   var isContinue;
-  for (var i = 0, l = this._jsons.length; i < l; i++) {
-    isContinue = fn.call(this._jsons[i], i, this._jsons[i]);
+  for (var i = 0, l = this._results.length; i < l; i++) {
+    isContinue = fn.call(this._results[i], i, this._results[i]);
     if (isContinue === false) {
-      return;
+      return this;
     }
   }
 };
 
 JQ.prototype.map = function(fn) {
   var results = [];
-  for (var i = 0, l = this._jsons.length; i < l; i++) {
-    results.push(fn.call(this._jsons[i], i, this._jsons[i]));
+  for (var i = 0, l = this._results.length; i < l; i++) {
+    results.push(fn.call(this._results[i], i, this._results[i]));
   }
   return new JQ(results);
 };

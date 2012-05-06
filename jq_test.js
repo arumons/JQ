@@ -163,8 +163,8 @@ describe('JQ', function(){
     it('remove property from the matched object set', function() {
       var $jq = JQ(json_string);
       $jq.removeProp('a');
-      console.log($jq.baseObject());
       should.not.exist($jq.baseObject().a);
+      should.exist($jq.baseObject().b);
 
       $jq = JQ(json_string);
       $jq('d').removeProp('d');

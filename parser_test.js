@@ -34,7 +34,7 @@ describe('evalCondition', function() {
     var obj = {a: 1, b: -2};
     var code = "~a";
     parser.evalCondition(obj, code).should.be.eql(-2);
-    
+
     var code = "~b";
     parser.evalCondition(obj, code).should.be.eql(1);
   });
@@ -189,6 +189,36 @@ describe('evalCondition', function() {
     parser.evalCondition(obj, code).should.be.true;
   });
 
+  it('test equality(=~) operator', function() {
+    var obj = {a: "abc", b: "abbbbbbc"};
+    var code = "a =~ /abc/";
+    parser.evalCondition(obj, code)[0].should.eql(obj.a);
+
+    var code = "a =~ /ggg/";
+    should.not.exist(parser.evalCondition(obj, code));
+
+    var code = "/ab+c/ =~ b";
+    parser.evalCondition(obj, code)[0].should.eql(obj.b);
+
+    var code = "/ggg/ =~ b";
+    should.not.exist(parser.evalCondition(obj, code));
+  });
+
+  it('test equality(!~) operator', function() {
+    var obj = {a: "abc", b: "abbbbbbc"};
+    var code = "a !~ /abc/";
+    parser.evalCondition(obj, code).should.be.false;
+
+    var code = "a !~ /ggg/";
+    parser.evalCondition(obj, code).should.be.true;
+
+    var code = "/ab+c/ !~ b";
+    parser.evalCondition(obj, code).should.be.false;
+
+    var code = "/ggg/ !~ b";
+    parser.evalCondition(obj, code).should.be.true;
+  });
+
   it('test bitwise-and operator', function() {
     var obj = {a: 3};
     var code = "a & 1";
@@ -251,5 +281,6 @@ describe('evalCondition', function() {
     var code = "(a + b) * 10";
     parser.evalCondition(obj, code).should.be.eql(120);
   });
+
 });
 

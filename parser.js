@@ -2,6 +2,10 @@ var jsp = require('uglify-js').parser;
 
 var global = (function() { return this;})();
 
+var isRegExp = function(obj) {
+  return toString.call(obj) == '[object RegExp]';
+};
+
 exports.evalCondition = evalCondition = function(obj, code) {
   return compile(code)(obj);
 };
@@ -87,6 +91,18 @@ var expr_eval = function(opStack, obj) {
       return lValue == rValue;
     } else if (bOp === '!=') {
       return lValue != rValue;
+    } else if (bOp === '=~') {
+      if (isRegExp(lValue)) {
+        return rValue.match(lValue);
+      } else {
+        return lValue.match(rValue);
+      }
+    } else if (bOp === '!~') {
+      if (isRegExp(lValue)) {
+        return !rValue.match(lValue);
+      } else {
+        return !lValue.match(rValue);
+      }
     } else if (bOp === '*') {
       return lValue * rValue;
     } else if (bOp === '/') {
@@ -148,6 +164,9 @@ var expr_eval = function(opStack, obj) {
       }
     } else if (type === 'num' || type ===  'string' || type === 'array') {
       var value = op[1];
+      return value;
+    } else if (type === 'regexp') {
+      var value = new RegExp(op[1], op[2]);
       return value;
     } else if (type === 'dot') {
       var object = expr_eval(opStack, obj);

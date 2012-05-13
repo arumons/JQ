@@ -48,7 +48,7 @@
     };
   }
   return this.require.define;
-}).call(this)({"jq": function(exports, require, module) {var parser = require('./parser');
+}).call(this)({"JQ": function(exports, require, module) {var parser = require('./parser');
 
 var extend = function(from, to) {
   for (var p in from) {

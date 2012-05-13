@@ -16,8 +16,9 @@
   "devDependencies": {
     "mocha": "1.0.3",
     "should": "0.6.0",
-    "uglify-js": "1.2.6"
+    "uglify-js": "1.2.6",
+    "stitch"  : "0.3.3"
   },
   "optionalDependencies": {},
-  "main": "jq.js"
+  "main": "lib/JQ.js"
 }

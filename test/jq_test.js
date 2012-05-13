@@ -1,5 +1,5 @@
 var should = require('should');
-var JQ = require('./jq.js').JQ;
+var JQ = require('../jq.js').JQ;
 
 describe('JQ', function(){
 

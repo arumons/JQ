@@ -197,7 +197,7 @@ describe('JQ', function(){
   });
 
   describe('map', function() {
-    it('pass each element in the current matched set throuth a function, producing a new JQ object containing the return values', function() {
+    it('pass each element in the current matched set through a function, producing a new JQ object containing the return values', function() {
       var $jq = JQ(json_string);
       var result = $jq.map(function() {
         return this.a;

@@ -1,5 +1,5 @@
 var should = require('should');
-var parser = require('../parser');
+var parser = require('../lib/parser');
 
 describe('evalCondition', function() {
 

@@ -14,8 +14,8 @@
   },
   "dependencies": {},
   "devDependencies": {
-    mocha: "1.0.3",
-    should: "0.6.0"
+    "mocha": "1.0.3",
+    "should": "0.6.0"
   },
   "optionalDependencies": {},
   "main": "jq.js"

@@ -1,0 +1,22 @@
+{
+  "author": "arumons <takohati1@gmail.com>",
+  "name": "JQ",
+  "description": "a DSL for querying javascript object.",
+  "version": "0.0.1",
+  "repository": {
+    "url": ""
+  },
+  "scripts": {
+    "test": "make test"
+  },
+  "engines": {
+    "node": "~0.6.9"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    mocha: "1.0.3",
+    should: "0.6.0",
+  },
+  "optionalDependencies": {},
+  "main": "jq.js"
+}

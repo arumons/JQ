@@ -51,8 +51,7 @@ $family("father_name === 'bob'").get(0).mother_name; // -> 'kathy'
 
 ## Documentation
 
-### JQ(object)
-### JQ(string)
+### JQ(object), JQ(string)
 
 Produces a selector object which take condition expression.
 JQ take a javascript object or string which can be parsed as JSON.
@@ -80,7 +79,7 @@ Accepts a conditional expression to filtering object.
 In a conditional expression, you can use operators below.
 
  * .(member)
- * [](member)
+ * \[\](member)
  * !
  * ~
  * +

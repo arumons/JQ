@@ -20,7 +20,7 @@ $ make JQ.js
 
 ## Example
 
-```bash
+```
 var JQ = require('JQ').JQ;
 
 var family = {
@@ -56,7 +56,7 @@ $family("father_name === 'bob'").get(0).mother_name; // -> 'kathy'
 Produces a selector object which take condition expression.
 JQ take a javascript object or string which can be parsed as JSON.
 
-```bash
+```
 var JQ = require('JQ').JQ;
 var people = {
   [
@@ -116,7 +116,7 @@ Detail of each operators is on MDN(https://developer.mozilla.org/en/JavaScript/R
 You can use these operators for regex matching.
 If you want to change operators precedence, you can use a parenthesis of course.
 
-```bash
+```
 var messages = [
   {
     speaker: 'bob',
@@ -143,9 +143,36 @@ $messages('speaker === "bob" && ( message === "hello" || message === "good bye")
 
 ### baseObject
 
+Return a object which is passed to JQ first.
+
+```
+var obj = { name: "bob", age: 18};
+$obj = JQ(obj);
+$obj.baseObject === obj // -> true
+```
+
 ### size
 
+Return the number of elements in JQ object.
+
+```
+var people = [{ name: "bob" }, { name: "jack" }, { name: "alice" }];
+var $people = JQ(people);
+$people.size() // -> 1
+$people('name === "bob" || name === "alice"').size() // -> 2
+```
+
 ### get 
+
+Get the js objects matched by the JQ object.
+
+```
+var people = [{ name: "bob" }, { name: "jack" }, { name: "alice" }];
+var $people = JQ(people);
+$people('name === "bob" || name === "alice"').get() //-> [{ name: "bob" }, { name: "alice" }]
+$people('name === "bob" || name === "alice"').get(0) //-> { name: "bob" }
+$people('name === "bob" || name === "alice"').get(1) //-> { name: "alice" }
+```
 
 ### eq
 

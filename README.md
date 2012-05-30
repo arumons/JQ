@@ -176,9 +176,30 @@ $people('name === "bob" || name === "alice"').get(1) //-> { name: "alice" }
 
 ### eq
 
+Reduce the set of matched elements to the one at the specified index.
+
+```
+var people = [{ name: "bob" }, { name: "jack" }, { name: "alice" }];
+var $people = JQ(people);
+$people('name === "bob" || name === "alice"').eq(1).get(0) //-> { name: "bob" }
+
+```
+
 ### empty
 
+Remove all properties from the matched object set.
+
+```
+var people = [{ name: "bob" }, { name: "jack" }, { name: "alice" }];
+var $people = JQ(people);
+$people('name === "bob" || name === "alice"').empty().get() //-> [{}, {}]
+
+```
+
+
 ### prop
+
+
 
 ### remove
 

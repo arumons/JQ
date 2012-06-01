@@ -164,7 +164,7 @@ $people('name === "bob" || name === "alice"').size() // -> 2
 
 ### get 
 
-Get the js objects matched by the JQ object.
+Return the nth object in the matched object set
 
 ```
 var people = [{ name: "bob" }, { name: "jack" }, { name: "alice" }];
@@ -176,13 +176,12 @@ $people('name === "bob" || name === "alice"').get(1) //-> { name: "alice" }
 
 ### eq
 
-Reduce the set of matched elements to the one at the specified index.
+Return the new JQ object that only have the nth object in the matched object set
 
 ```
 var people = [{ name: "bob" }, { name: "jack" }, { name: "alice" }];
 var $people = JQ(people);
 $people('name === "bob" || name === "alice"').eq(1).get(0) //-> { name: "bob" }
-
 ```
 
 ### empty
@@ -193,13 +192,19 @@ Remove all properties from the matched object set.
 var people = [{ name: "bob" }, { name: "jack" }, { name: "alice" }];
 var $people = JQ(people);
 $people('name === "bob" || name === "alice"').empty().get() //-> [{}, {}]
-
+$people //-> [{}, {name: "jack" }, {}]
 ```
-
 
 ### prop
 
+Return value of a property for the first object in the matched object set
 
+```
+var people = [{ name: "bob" }, { name: "jack" }, { name: "alice" }];
+var $people = JQ(people);
+$people('name === "bob" || name === "alice"').prop("name") //-> "bob"
+$people('name === "bob" || name === "alice"').eq(1).prop("name") //-> "jack"
+```
 
 ### remove
 

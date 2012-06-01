@@ -60,7 +60,7 @@ describe('JQ', function(){
   });
 
   describe('get', function() {
-    it('return the nth element in the matched object set', function() {
+    it('return the nth object in the matched object set', function() {
       var $jq = JQ(js_object);
       $jq.get(0).should.eql(js_object);
 
@@ -77,7 +77,7 @@ describe('JQ', function(){
   });
 
   describe('eq', function() {
-    it('return the new JQ object that only have the nth element in the matched object set', function() {
+    it('return the new JQ object that only have the nth object in the matched object set', function() {
       var $jq = JQ(js_object);
       $jq.size().should.eql(1);
 
@@ -119,7 +119,7 @@ describe('JQ', function(){
 
   describe('prop', function() {
     describe('(key)', function() {
-      it('should return value of a property for the first element in the set of matched elements', function() {
+      it('should return value of a property for the first object in the matched object set', function() {
         var $jq = JQ(js_object);
         $jq.prop('a').should.eql(js_object.a);
         $jq.prop('b').should.eql(js_object.b);

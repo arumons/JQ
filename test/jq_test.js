@@ -144,7 +144,7 @@ describe('JQ', function(){
   });
 
   describe('remove', function() {
-    it('remove all properties from the matched object set', function() {
+    it('remove all mathed object', function() {
        var $jq = JQ(json_string);
        $jq.remove();
        $jq.baseObject().should.eql({});

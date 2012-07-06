@@ -49,7 +49,7 @@ $family("father_name === 'bob'").get(0).mother_name; // -> 'kathy'
 
 ```
 
-## Documentation
+## API
 
 ### JQ(object), JQ(string)
 
@@ -73,9 +73,9 @@ var $people = JQ(people);
 var $people = JQ('{ [ { "name": "john" }, { "name": "bob" } ] }');
 ```
 
-### (selector object)(condition)
+### Selectors
 
-Accepts a conditional expression to filtering object.
+Selector accepts a conditional expression to filtering object.
 In a conditional expression, you can use operators below.
 
  * .(member)
